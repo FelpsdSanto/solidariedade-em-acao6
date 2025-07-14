@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Visualizar Doações</title>
+  <link rel="stylesheet" href="css/stylevisualizar.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Lista de Doações</h2>
+    <button id="exportarCSV">Exportar CSV</button>
+    <table id="tabelaDoacoes">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Tipo</th>
+          <th>Valor</th>
+          <th>Descrição</th>
+          <th>Doador</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Doações serão inseridas aqui -->
+      </tbody>
+    </table>
+    <p id="mensagem"></p>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+
+    const tabelaBody = document.querySelector('#tabelaDoacoes tbody');
+    const mensagem = document.getElementById('mensagem');
+    const btnExportar = document.getElementById('exportarCSV');
+
+    // Função para buscar doações e renderizar tabela
+    async function carregarDoacoes() {
+      try {
+        const res = await fetch(`${API_URL}/doacoes`);
+        if (!res.ok) throw new Error('Erro ao carregar doações');
+        const doacoes = await res.json();
+
+        tabelaBody.innerHTML = ''; // limpa tabela
+
+        doacoes.forEach(d => {
+          const tr = document.createElement('tr');
+
+          // Formata data no padrão brasileiro (ex: 08/06/2025)
+          const dataFormatada = new Date(d.dataDoacao).toLocaleDateString('pt-BR');
+
+          tr.innerHTML = `
+            <td>${dataFormatada}</td>
+            <td>${d.tipo}</td>
+            <td>${d.tipo === 'dinheiro' ? d.valor.toFixed(2) : '-'}</td>
+            <td>${d.tipo === 'objeto' ? d.descricaoObjeto : '-'}</td>
+            <td>${d.nomeDoador}</td>
+            <td><button class="btnExcluir" data-id="${d._id}">Excluir</button></td>
+          `;
+
+          tabelaBody.appendChild(tr);
+        });
+
+        // Adiciona evento para botões excluir
+        document.querySelectorAll('.btnExcluir').forEach(btn => {
+          btn.addEventListener('click', excluirDoacao);
+        });
+
+      } catch (error) {
+        mensagem.style.color = 'red';
+        mensagem.textContent = error.message;
+      }
+    }
+
+    // Função para excluir doação
+    async function excluirDoacao(event) {
+      const id = event.target.getAttribute('data-id');
+      if (!confirm('Tem certeza que deseja excluir esta doação?')) return;
+
+      try {
+        const res = await fetch(`${API_URL}/doacoes/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Erro ao excluir doação');
+
+        mensagem.style.color = 'green';
+        mensagem.textContent = 'Doação excluída com sucesso!';
+        carregarDoacoes();
+      } catch (error) {
+        mensagem.style.color = 'red';
+        mensagem.textContent = error.message;
+      }
+    }
+
+    // Botão exportar CSV
+    btnExportar.addEventListener('click', () => {
+      window.open(`${API_URL}/doacoes/exportar`, '_blank');
+    });
+
+    // Carrega as doações ao abrir a página
+    carregarDoacoes();
+  </script>
+</body>
+</html>

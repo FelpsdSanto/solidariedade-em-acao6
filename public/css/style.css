@@ -1,0 +1,62 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #e0f0ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 350px;
+}
+
+input, button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+#mensagem {
+  margin-top: 15px;
+  color: green;
+}
+
+/* Estilo para links que parecem botões com moldura */
+.link-btn {
+  display: inline-block;
+  text-decoration: none;
+  color: #007bff;
+  border: 2px solid #007bff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
+  margin: 8px 0;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.link-btn:hover {
+  background-color: #007bff;
+  color: white;
+}

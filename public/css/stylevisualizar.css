@@ -1,0 +1,135 @@
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #f7f9fc;
+  color: #333;
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #2c3e50;
+}
+
+/* Botão Exportar */
+button {
+  cursor: pointer;
+  padding: 10px 15px;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  margin-bottom: 15px;
+  display: block;
+  margin-left: auto; /* direita */
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+/* Tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+}
+
+thead {
+  background-color: #2980b9;
+  color: white;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+}
+
+tr:hover {
+  background-color: #f1f8ff;
+}
+
+/* Botões na tabela */
+.btn-ver, .btn-excluir {
+  padding: 6px 10px;
+  margin-right: 5px;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.btn-ver {
+  background-color: #27ae60;
+  color: white;
+}
+
+.btn-ver:hover {
+  background-color: #1e8449;
+}
+
+.btn-excluir {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-excluir:hover {
+  background-color: #c0392b;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.conteudo {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn-fechar {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.btn-fechar:hover {
+  background-color: #2980b9;
+}
+
+#listaDependentes {
+  list-style-type: disc;
+  padding-left: 20px;
+  max-height: 200px;
+  overflow-y: auto;
+  color: #555;
+}

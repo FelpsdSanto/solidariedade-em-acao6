@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Visualizar Famílias</title>
+  <link rel="stylesheet" href="css/stylevisualizar.css"> <!-- Caminho correto para a pasta css -->
+</head>
+
+<body>
+  <h1>Famílias Cadastradas</h1>
+
+  <button onclick="exportarCSV()">Exportar CSV</button>
+
+  <table id="tabelaFamilias">
+    <thead>
+      <tr>
+        <th>Responsável</th>
+        <th>Telefone</th>
+        <th>Whatsapp?</th>
+        <th>Cidade</th>
+        <th>Renda</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Modal para dependentes -->
+  <div id="modal" class="modal">
+    <div class="conteudo">
+      <button id="fecharModal" class="btn-fechar">Fechar</button>
+      <h2>Dependentes</h2>
+      <ul id="listaDependentes"></ul>
+    </div>
+  </div>
+
+  <script>
+    let familias = [];
+
+    async function carregarFamilias() {
+      const resposta = await fetch('/familias');
+      familias = await resposta.json();
+
+      const corpoTabela = document.querySelector('#tabelaFamilias tbody');
+      corpoTabela.innerHTML = '';
+
+      familias.forEach(fam => {
+        const linha = document.createElement('tr');
+
+        linha.innerHTML = `
+          <td>${fam.responsavel.nome}</td>
+          <td>${fam.responsavel.telefone}</td>
+          <td>${fam.responsavel.whatsapp ? 'Sim' : 'Não'}</td>
+          <td>${fam.responsavel.endereco.cidade}</td>
+          <td>R$ ${Number(fam.responsavel.renda).toFixed(2)}</td>
+          <td>
+            <button class="btn-ver" onclick="verDependentes('${fam._id}')">Ver Dependentes</button>
+            <button class="btn-excluir" onclick="excluirFamilia('${fam._id}')">Excluir</button>
+          </td>
+        `;
+
+        corpoTabela.appendChild(linha);
+      });
+    }
+
+    function exportarCSV() {
+      window.location.href = '/familias/exportar';
+    }
+
+    function excluirFamilia(id) {
+      if (confirm('Tem certeza que deseja excluir esta família?')) {
+        fetch(`/familias/${id}`, {
+          method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(() => {
+          alert('Família excluída com sucesso.');
+          carregarFamilias();
+        })
+        .catch(err => alert('Erro ao excluir.'));
+      }
+    }
+
+    function verDependentes(id) {
+      const familia = familias.find(f => f._id === id);
+
+      const lista = document.getElementById('listaDependentes');
+      lista.innerHTML = '';
+
+      if (familia.dependentes.length === 0) {
+        lista.innerHTML = '<li>Sem dependentes cadastrados.</li>';
+      } else {
+        familia.dependentes.forEach(dep => {
+          const li = document.createElement('li');
+          li.textContent = `${dep.nome} (${dep.parentesco}) - ${new Date(dep.nascimento).toLocaleDateString('pt-BR')}`;
+          lista.appendChild(li);
+        });
+      }
+
+      document.getElementById('modal').style.display = 'flex';
+    }
+
+    document.getElementById('fecharModal').onclick = () => {
+      document.getElementById('modal').style.display = 'none';
+    };
+
+    carregarFamilias();
+  </script>
+</body>
+</html>

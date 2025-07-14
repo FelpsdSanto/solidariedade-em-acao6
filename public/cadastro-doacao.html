@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastro de Doação</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Cadastro de Doação</h2>
+
+    <label for="dataDoacao">Data da Doação:</label>
+    <input type="date" id="dataDoacao" />
+
+    <label for="tipoDoacao">Tipo de Doação:</label>
+    <select id="tipoDoacao">
+      <option value="">-- Selecione --</option>
+      <option value="dinheiro">Dinheiro</option>
+      <option value="objeto">Objeto</option>
+    </select>
+
+    <div id="campoValor" style="display:none;">
+      <label for="valorDoacao">Valor (R$):</label>
+      <input type="number" id="valorDoacao" min="0" step="0.01" />
+    </div>
+
+    <div id="campoObjeto" style="display:none;">
+      <label for="descricaoObjeto">Descrição do Objeto:</label>
+      <input type="text" id="descricaoObjeto" />
+    </div>
+
+    <label for="nomeDoador">Nome do Doador:</label>
+    <input type="text" id="nomeDoador" />
+
+    <button onclick="cadastrarDoacao()">Cadastrar Doação</button>
+
+    <p id="mensagem"></p>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+
+    const tipoDoacao = document.getElementById('tipoDoacao');
+    const campoValor = document.getElementById('campoValor');
+    const campoObjeto = document.getElementById('campoObjeto');
+    const mensagem = document.getElementById('mensagem');
+
+    tipoDoacao.addEventListener('change', () => {
+      if (tipoDoacao.value === 'dinheiro') {
+        campoValor.style.display = 'block';
+        campoObjeto.style.display = 'none';
+      } else if (tipoDoacao.value === 'objeto') {
+        campoValor.style.display = 'none';
+        campoObjeto.style.display = 'block';
+      } else {
+        campoValor.style.display = 'none';
+        campoObjeto.style.display = 'none';
+      }
+      mensagem.textContent = ''; // limpa mensagem ao trocar tipo
+    });
+
+    async function cadastrarDoacao() {
+      const data = document.getElementById('dataDoacao').value;
+      const tipo = tipoDoacao.value;
+      const valor = document.getElementById('valorDoacao').value;
+      const descricao = document.getElementById('descricaoObjeto').value;
+      const nomeDoador = document.getElementById('nomeDoador').value.trim();
+
+      if (!data || !tipo || !nomeDoador) {
+        mensagem.style.color = 'red';
+        mensagem.textContent = 'Por favor, preencha todos os campos obrigatórios.';
+        return;
+      }
+
+      if (tipo === 'dinheiro' && (!valor || valor <= 0)) {
+        mensagem.style.color = 'red';
+        mensagem.textContent = 'Informe um valor válido para a doação em dinheiro.';
+        return;
+      }
+
+      if (tipo === 'objeto' && descricao.trim() === '') {
+        mensagem.style.color = 'red';
+        mensagem.textContent = 'Informe a descrição do objeto doado.';
+        return;
+      }
+
+      const dados = {
+        dataDoacao: data,
+        tipo,
+        nomeDoador,
+        ...(tipo === 'dinheiro' ? { valor: parseFloat(valor) } : { descricaoObjeto: descricao })
+      };
+
+      try {
+        const res = await fetch(`${API_URL}/doacoes`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dados)
+        });
+
+        if (res.ok) {
+          mensagem.style.color = 'green';
+          mensagem.textContent = 'Doação cadastrada com sucesso!';
+
+          // Limpar formulário
+          document.getElementById('dataDoacao').value = '';
+          tipoDoacao.value = '';
+          campoValor.style.display = 'none';
+          campoObjeto.style.display = 'none';
+          document.getElementById('valorDoacao').value = '';
+          document.getElementById('descricaoObjeto').value = '';
+          document.getElementById('nomeDoador').value = '';
+        } else {
+          const erro = await res.json();
+          mensagem.style.color = 'red';
+          mensagem.textContent = 'Erro: ' + (erro.error || 'Erro desconhecido');
+        }
+      } catch (err) {
+        mensagem.style.color = 'red';
+        mensagem.textContent = 'Erro ao conectar com o servidor.';
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
