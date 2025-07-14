@@ -1,3 +1,6 @@
+// Carregar variáveis de ambiente do arquivo .env (apenas para desenvolvimento local)
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -6,7 +9,7 @@ const path = require('path');
 const User = require('./models/User');
 
 const familiaControllers = require('./controllers/familiaControllers');
-const doacaoController = require('./controllers/doacaoController');  // Corrigido aqui (importar todo o controller)
+const doacaoController = require('./controllers/doacaoController');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,10 +19,13 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Conexão com MongoDB Atlas
-mongoose.connect('mongodb+srv://felipesantospinheiro:Karla-1104@solidariedade.tjhxogy.mongodb.net/solidariedade?retryWrites=true&w=majority&appName=solidariedade')
-  .then(() => console.log('Conectado ao MongoDB Atlas!'))
-  .catch(err => console.error('Erro ao conectar:', err));
+// Conexão com MongoDB Atlas usando variável de ambiente
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Conectado ao MongoDB Atlas!'))
+.catch(err => console.error('Erro ao conectar:', err));
 
 // Rota de teste
 app.get('/', (req, res) => {
