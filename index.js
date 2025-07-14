@@ -20,12 +20,18 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Conexão com MongoDB Atlas usando variável de ambiente
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('Conectado ao MongoDB Atlas!'))
-.catch(err => console.error('Erro ao conectar:', err));
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('Conectado ao MongoDB Atlas!');
+
+    // Só inicia o servidor depois que a conexão estiver OK
+    app.listen(PORT, () => {
+      console.log(`Servidor rodando na porta ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('Erro ao conectar:', err);
+  });
 
 // Rota de teste
 app.get('/', (req, res) => {
@@ -79,8 +85,3 @@ app.post('/doacoes', doacaoController.criarDoacao);
 app.get('/doacoes', doacaoController.listarDoacoes);
 app.delete('/doacoes/:id', doacaoController.excluirDoacao);
 app.get('/doacoes/exportar', doacaoController.exportarCSV);
-
-// Inicia o servidor
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
