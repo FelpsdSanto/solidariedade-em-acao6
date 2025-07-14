@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://solidariedade-em-acao6.onrender.com';
 
 async function register() {
   const nome = document.getElementById('nome').value.trim();
