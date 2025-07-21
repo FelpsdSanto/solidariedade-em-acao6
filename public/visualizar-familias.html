@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Visualizar Famílias</title>
-  <link rel="stylesheet" href="css/stylevisualizar.css"> <!-- Caminho correto para a pasta css -->
+  <link rel="stylesheet" href="css/stylevisualizar.css">
 </head>
 
 <body>
@@ -26,7 +26,6 @@
     <tbody></tbody>
   </table>
 
-  <!-- Modal para dependentes -->
   <div id="modal" class="modal">
     <div class="conteudo">
       <button id="fecharModal" class="btn-fechar">Fechar</button>
@@ -36,10 +35,14 @@
   </div>
 
   <script>
+    // Adicione esta linha, apontando para o seu backend no OnRender.com
+    const API_URL = 'https://solidariedade-em-acao6.onrender.com'; 
+
     let familias = [];
 
     async function carregarFamilias() {
-      const resposta = await fetch('/familias');
+      // Mude para ${API_URL}/familias
+      const resposta = await fetch(`${API_URL}/familias`); 
       familias = await resposta.json();
 
       const corpoTabela = document.querySelector('#tabelaFamilias tbody');
@@ -65,12 +68,14 @@
     }
 
     function exportarCSV() {
-      window.location.href = '/familias/exportar';
+      // Mude para ${API_URL}/familias/exportar
+      window.location.href = `${API_URL}/familias/exportar`; 
     }
 
     function excluirFamilia(id) {
       if (confirm('Tem certeza que deseja excluir esta família?')) {
-        fetch(`/familias/${id}`, {
+        // Mude para ${API_URL}/familias/${id}
+        fetch(`${API_URL}/familias/${id}`, { 
           method: 'DELETE'
         })
         .then(res => res.json())
@@ -105,6 +110,7 @@
       document.getElementById('modal').style.display = 'none';
     };
 
+    // Chamada inicial para carregar as famílias quando a página carregar
     carregarFamilias();
   </script>
 </body>
